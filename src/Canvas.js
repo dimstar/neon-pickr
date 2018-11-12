@@ -16,7 +16,7 @@ class Canvas extends React.Component {
     }
 
     mousePos(e){
-        this.contextPixel( this.state.ctx, e.clientX - this.state.rect.x, e.clientY);
+        this.contextPixel( this.state.ctx, e.clientX - this.state.rect.x, e.clientY  - this.state.rect.y);
     }
 
     rgbToHex(r, g, b) {
@@ -47,15 +47,20 @@ class Canvas extends React.Component {
 
     contextPixel(ctx, x, y){
         let pixel = ctx.getImageData( x, y, 1, 1).data;
-        console.log('x and y?', x, y);
+        // console.log('x and y?', x, y);
         let hex = "#" + ("000000" + this.rgbToHex(pixel[0], pixel[1], pixel[2])).slice(-6);
         console.log('image data?', hex);
         document.getElementById("root").style.background = hex;
+        ctx.font = "18px Arial";
+        ctx.fillStyle = 'white';
+        ctx.fillRect(this.state.rect.width - 128 ,this.state.rect.height - 128, 128, 128);
+        ctx.fillStyle = hex;
+        ctx.fillText( hex, this.state.rect.width - 116 ,this.state.rect.height - 100);
     }
 
     render() {
         
-        return (<canvas onClick={this.mousePos.bind(this)} ref="canvas" width={500} height={500} />);
+        return (<canvas onClick={this.mousePos.bind(this)} ref="canvas" width={500} height={500} className="Canvas" />);
     }
 }
 
