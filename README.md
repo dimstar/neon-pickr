@@ -9,4 +9,5 @@ Get neon colors by clicking within the gradient of bright neon colors! Did you w
 Checkout the repo, then just
 
 ```~$ npm i ```
+
 ```~$ npm start ```
