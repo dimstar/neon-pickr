@@ -1,28 +1,22 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 class Canvas extends React.Component {
-    // constructor(props) {
-    //     super(props);
-    // }
+    constructor(props) {
+        super(props);
+        this.contextPixel.bind(this);
+    }
 
     componentDidMount() {
         this.doCanvasThings();
+        this.setState({
+            rect: ReactDOM.findDOMNode(this).getBoundingClientRect(),
+        })
+        console.log(ReactDOM.findDOMNode(this).getBoundingClientRect());
     }
 
-    canvasFun = () => {
-        const xCoord = 0;
-        const yCoord = 0;
-        const canvasWidth = 1024;
-    
-        const getColorIndicesForCoord = (x, y, width) => {
-          const red = y * (width * 4) + x * 4;
-          return [red, red + 1, red + 2, red + 3];
-        };
-    
-        const colorIndices = getColorIndicesForCoord(xCoord, yCoord, canvasWidth);
-    
-        // const [redIndex, greenIndex, blueIndex, alphaIndex] = colorIndices;
-        return colorIndices;
+    mousePos(e){
+        this.contextPixel( this.state.ctx, e.clientX - this.state.rect.x, e.clientY);
     }
 
     rgbToHex(r, g, b) {
@@ -38,22 +32,30 @@ class Canvas extends React.Component {
         const ctx_local = this.refs.canvas.getContext("2d");
     
         console.log('image? ', image_proper);
-        console.log('image? ', this.canvasFun());
+
         ctx_local.fillRect(0,0, 100, 100);
         // images can only be drawn once the browser has got them...
         image_proper.onload = () => {
-            ctx_local.drawImage( image_proper, 0, 0)
-            let pixel = ctx_local.getImageData( 1, 1, 1, 1).data;
-            let hex = "#" + ("000000" + this.rgbToHex(pixel[0], pixel[1], pixel[2])).slice(-6);
-            console.log('image data?', hex);
-            document.getElementById("root").style.background = hex;
+            ctx_local.drawImage( image_proper, 0, 0);
+            this.setState({
+                ctx: ctx_local
+            });
+            this.contextPixel(ctx_local, 1, 1);
         }
         // return ctx;
     }
 
+    contextPixel(ctx, x, y){
+        let pixel = ctx.getImageData( x, y, 1, 1).data;
+        console.log('x and y?', x, y);
+        let hex = "#" + ("000000" + this.rgbToHex(pixel[0], pixel[1], pixel[2])).slice(-6);
+        console.log('image data?', hex);
+        document.getElementById("root").style.background = hex;
+    }
+
     render() {
         
-        return (<canvas ref="canvas" width={500} height={500} />);
+        return (<canvas onClick={this.mousePos.bind(this)} ref="canvas" width={500} height={500} />);
     }
 }
 
